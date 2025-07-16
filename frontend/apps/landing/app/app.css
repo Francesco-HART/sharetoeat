@@ -1,0 +1,12 @@
+@import "@repo/ui/globals.css";
+@source "../../../packages/ui";
+
+html {
+	scroll-behavior: smooth;
+}
+
+@layer utilities {
+	.container {
+		@apply mx-auto px-8;
+	}
+}

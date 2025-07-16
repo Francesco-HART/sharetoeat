@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "composite": true,
+        "moduleResolution": "node",
+        "module": "esnext",
+        "target": "esnext",
+        "strict": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "skipLibCheck": true
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

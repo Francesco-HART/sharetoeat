@@ -1,0 +1,26 @@
+{
+  "name": "@repo/client-api",
+  "packageManager": "yarn@4.9.1",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    "./client/*": "./src/client/*.ts",
+    "./generated/*": "./src/generated/*.ts"
+  },
+  "scripts": {
+    "build": "",
+    "lint": "eslint .",
+    "clean": "rm -rf .turbo",
+    "codegen": "openapi --input http://localhost:5064/swagger/v1/swagger.json --output ./src/generated --client axios"
+  },
+  "devDependencies": {
+    "openapi-typescript-codegen": "^0.29.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "axios": "^1.10.0",
+    "form-data": "^4.0.3"
+  }
+}

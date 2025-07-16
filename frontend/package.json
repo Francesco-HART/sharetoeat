@@ -1,0 +1,31 @@
+{
+  "name": "frontend",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "ui": "yarn workspace @repo/ui",
+    "dashboard": "yarn workspace @repo/dashboard",
+    "client-axios-api": "yarn workspace @repo/client-api",
+    "core": "yarn workspace @repo/core",
+    "landing": "yarn workspace @repo/landing",
+    "lint": "biome check --staged --write",
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "test": "turbo test",
+    "test:watch": "turbo test:watch",
+    "test:dashboard": "yarn dashboard test && yarn core test",
+    "build:dashboard": "yarn build --filter=@repo/dashboard",
+    "dev:dashboard": "yarn dev --filter=@repo/dashboard",
+    "build:landing": "yarn build --filter=@repo/landing",
+    "dev:landing": "yarn dev --filter=@repo/landing",
+    "codegen": "yarn workspace @repo/client-api codegen"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "turbo": "^2.5.3"
+  },
+  "packageManager": "yarn@4.9.1"
+}
