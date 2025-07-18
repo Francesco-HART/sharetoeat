@@ -27,7 +27,7 @@ export function DashboardHeader() {
 
 				<div className="flex items-center space-x-2">
 					<Building2 className="h-6 w-6 text-primary" />
-					<span className="font-bold text-xl">HomeKeepr</span>
+					<span className="font-bold text-xl">Wally</span>
 				</div>
 
 				<div className="flex-1" />
