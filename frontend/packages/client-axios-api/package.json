@@ -13,7 +13,7 @@
     "build": "",
     "lint": "eslint .",
     "clean": "rm -rf .turbo",
-    "codegen": "openapi --input http://localhost:5064/swagger/v1/swagger.json --output ./src/generated --client axios"
+    "codegen": "openapi --input http://localhost:3000/swagger/v1/swagger.json --output ./src/generated --client axios"
   },
   "devDependencies": {
     "openapi-typescript-codegen": "^0.29.0",

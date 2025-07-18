@@ -1,149 +1,35 @@
 import axios from "axios";
 import * as crypto from "crypto";
 import { GoogleAuth } from "google-auth-library";
-import * as path from "path";
-import jwt from "jsonwebtoken";
-import data from "./service-account.json";
+import * as jwt from "jsonwebtoken";
+import { GenericClass } from "./generic-class";
+import { GenericObject } from "./generic-object";
+import { GoogleWalletConfig } from "./google-wallet-config";
+import { GoogleWalletGateway } from "@app/google-wallet/ports/google-wallet.gateway";
+import { Injectable } from "@nestjs/common";
+import * as fs from "fs";
 
-interface GoogleWalletConfig {
-  issuerId: string;
-  serviceAccountKey: string;
-}
-
-interface GenericClass {
-  id: string;
-  classTemplateInfo?: {
-    cardTemplateOverride?: {
-      cardRowTemplateInfos?: Array<{
-        twoItems?: {
-          startItem?: {
-            firstValue?: {
-              fields?: Array<{
-                fieldPath?: string;
-              }>;
-            };
-          };
-          endItem?: {
-            firstValue?: {
-              fields?: Array<{
-                fieldPath?: string;
-              }>;
-            };
-          };
-        };
-      }>;
-    };
-  };
-  imageModulesData?: Array<{
-    mainImage?: {
-      sourceUri?: {
-        uri?: string;
-      };
-      contentDescription?: {
-        defaultValue?: {
-          language?: string;
-          value?: string;
-        };
-      };
-    };
-    id?: string;
-  }>;
-  textModulesData?: Array<{
-    header?: string;
-    body?: string;
-    id?: string;
-  }>;
-  linksModuleData?: {
-    uris?: Array<{
-      uri?: string;
-      description?: string;
-      id?: string;
-    }>;
-  };
-}
-
-interface GenericObject {
-  id: string;
-  classId: string;
-  genericType: string;
-  hexBackgroundColor?: string;
-  logo?: {
-    sourceUri?: {
-      uri?: string;
-    };
-    contentDescription?: {
-      defaultValue?: {
-        language?: string;
-        value?: string;
-      };
-    };
-  };
-  cardTitle?: {
-    defaultValue?: {
-      language?: string;
-      value?: string;
-    };
-  };
-  subheader?: {
-    defaultValue?: {
-      language?: string;
-      value?: string;
-    };
-  };
-  header?: {
-    defaultValue?: {
-      language?: string;
-      value?: string;
-    };
-  };
-  textModulesData?: Array<{
-    header?: string;
-    body?: string;
-    id?: string;
-  }>;
-  imageModulesData?: Array<{
-    mainImage?: {
-      sourceUri?: {
-        uri?: string;
-      };
-      contentDescription?: {
-        defaultValue?: {
-          language?: string;
-          value?: string;
-        };
-      };
-    };
-    id?: string;
-  }>;
-  barcode?: {
-    type?: string;
-    value?: string;
-    alternateText?: string;
-  };
-  heroImage?: {
-    sourceUri?: {
-      uri?: string;
-    };
-    contentDescription?: {
-      defaultValue?: {
-        language?: string;
-        value?: string;
-      };
-    };
-  };
-}
-
-export class GoogleWalletService {
+@Injectable()
+export class GoogleWalletService implements GoogleWalletGateway {
   private issuerId: string;
+  private keyFilePath: string;
+  private privateKey: string;
+  private privateClientEmail: string;
   private baseURL = "https://walletobjects.googleapis.com/walletobjects/v1";
 
   constructor(config: GoogleWalletConfig) {
     this.issuerId = config.issuerId;
+    this.keyFilePath = config.keyFilePath;
+    const serviceAccountJson = JSON.parse(
+      fs.readFileSync(config.keyFilePath, "utf-8")
+    );
+    this.privateKey = serviceAccountJson.private_key;
+    this.privateClientEmail = serviceAccountJson.client_email;
   }
 
   private async getBearerToken() {
     const auth = new GoogleAuth({
-      keyFile: path.join(__dirname, "service-account.json"), // path to your downloaded key
+      keyFile: this.keyFilePath,
       scopes: ["https://www.googleapis.com/auth/wallet_object.issuer"],
     });
 
@@ -151,7 +37,7 @@ export class GoogleWalletService {
 
     try {
       const accessTokenResponse = await client.getAccessToken();
-      console.log("Using Bearer token:", accessTokenResponse);
+      console.log("Using Bearer token");
       return accessTokenResponse.token;
     } catch (error) {
       console.error("Error getting access token:", error);
@@ -185,7 +71,6 @@ export class GoogleWalletService {
     const classId = `${this.issuerId}.${classSuffix}`;
     console.log("Creating class with ID:", classId);
 
-    // Vérifier si la classe existe déjà
     try {
       await this.makeAuthenticatedRequest("GET", `/genericClass/${classId}`);
       console.log(`Class ${classId} already exists!`);
@@ -197,7 +82,6 @@ export class GoogleWalletService {
       }
     }
 
-    // Créer une nouvelle classe
     const newClass: GenericClass = {
       id: classId,
       ...classData,
@@ -224,7 +108,6 @@ export class GoogleWalletService {
   ): Promise<{ objectId: string; saveUrl: string }> {
     const objectId = `${this.issuerId}.${objectSuffix}`;
 
-    // Créer l'objet Google Wallet
     const walletObject: GenericObject = {
       id: objectId,
       classId: classId,
@@ -268,9 +151,8 @@ export class GoogleWalletService {
         "/genericObject",
         walletObject
       );
-      console.log("Object created successfully:", response.data);
+      console.log("Object created successfully");
 
-      // Générer l'URL "Add to Google Wallet"
       const saveUrl = this.generateAddToGoogleWalletUrl(objectId);
 
       return {
@@ -289,7 +171,7 @@ export class GoogleWalletService {
   private generateAddToGoogleWalletUrl(objectId: string): string {
     const baseUrl = "https://pay.google.com/gp/v/save/";
     const payload = {
-      iss: data.client_email,
+      iss: this.privateClientEmail,
       aud: "google",
       typ: "savetowallet",
       iat: Math.floor(Date.now() / 1000),
@@ -306,7 +188,7 @@ export class GoogleWalletService {
 
     // En production, vous devriez signer ce JWT avec votre clé privée
     // Pour cet exemple, nous retournons une URL de base
-    const encodedPayload = jwt.sign(payload, data.private_key, {
+    const encodedPayload = jwt.sign(payload, this.privateKey, {
       algorithm: "RS256",
       header: {
         typ: "JWT",
@@ -317,7 +199,6 @@ export class GoogleWalletService {
     return `${baseUrl}${encodedPayload}`;
   }
 
-  // Méthode utilitaire pour créer une carte complète avec classe et objet
   async createWalletCard(cardData: {
     objectSuffix: string;
     title: string;
@@ -392,39 +273,39 @@ export class GoogleWalletService {
     };
   }
 
-  // Méthode pour créer rapidement une carte de fidélité
   async createLoyaltyCard(customerData: {
-    customerName: string;
-    points: number;
-    cardNumber: string;
-    companyName: string;
     classId: string;
-    logoUrl?: string;
   }): Promise<{ objectId: string; saveUrl: string }> {
-    const objectSuffix = `customer_${customerData.cardNumber}_${customerData.classId}`;
+    const cardNumber = crypto.randomUUID();
+
+    const companyName = "Wally";
+
+    const objectSuffix = `customer_${cardNumber}_${customerData.classId}`;
+    const description = "Hello world";
+    const barcodeValue = "";
 
     return this.createWalletCard({
       classId: customerData.classId,
       objectSuffix,
-      title: `${customerData.companyName} - Carte de fidélité`,
-      subtitle: customerData.customerName,
-      description: `${customerData.points} points`,
-      logoUrl: customerData.logoUrl,
+      title: `${companyName} - Carte de fidélité`,
+      subtitle: companyName,
+      description: `${description} `,
+      logoUrl: undefined,
       backgroundColor: "#1976d2",
 
       textModules: [
         {
           header: "Numéro de carte",
-          body: customerData.cardNumber,
+          body: cardNumber,
           id: "card_number",
         },
-        {
-          header: "Points",
-          body: customerData.points.toString(),
-          id: "points",
-        },
+        // {
+        //   header: "Points",
+        //   body: customerData.points.toString(),
+        //   id: "points",
+        // },
       ],
-      barcodeValue: customerData.cardNumber,
+      barcodeValue,
     });
   }
 

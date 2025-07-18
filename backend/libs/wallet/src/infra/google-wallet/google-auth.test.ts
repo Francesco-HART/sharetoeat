@@ -1,5 +1,4 @@
-import { GoogleWalletService } from "./google-wallet";
-import * as crypto from "crypto";
+import { GoogleWalletService } from "./google-wallet.service";
 
 describe("GoogleWalletService", () => {
   let service: GoogleWalletService;
@@ -8,6 +7,7 @@ describe("GoogleWalletService", () => {
     service = new GoogleWalletService({
       issuerId: "3388000000022747072",
       serviceAccountKey: "BCR2DN4T6OC75NLU",
+      keyFilePath: "path/to/your/service-account.json", // Adjust the path as needed
     });
   });
 
@@ -15,10 +15,10 @@ describe("GoogleWalletService", () => {
     const response = await service.createLoyaltyCard({
       classId:
         "3388000000022747072.loyalty_3ec8a9f7-0881-4f67-a8fc-8bc29886fef2",
-      customerName: "string",
-      points: 10,
-      cardNumber: "string",
-      companyName: "string",
+      // customerName: "string",
+      // points: 10,
+      // cardNumber: "string",
+      // companyName: "string",
     });
 
     console.log(response);

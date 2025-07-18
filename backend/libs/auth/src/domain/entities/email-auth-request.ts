@@ -1,34 +1,34 @@
-import { err, ok } from 'neverthrow'
-import { EmailAuthRequestCreatedEvent } from '../events/email-auth-request.events'
-import { Time } from '../value-objects/time'
+import { err, ok } from "neverthrow";
+import { EmailAuthRequestCreatedEvent } from "../events/email-auth-request.events";
+import { Time } from "../value-objects/time";
 import {
   EmailAuthRequestAlreadyUsedError,
   EmailAuthRequestExpiredError,
   EmailAuthRequestInvalidCodeError,
-} from '../errors/email-auth-requests.errors'
-import { AggregateRoot } from '@app/core/domain/entities/aggregate-root'
+} from "../errors/email-auth-requests.errors";
+import { AggregateRoot } from "@app/core/domain/entities/aggregate-root";
 
 type Props = {
-  id: string
-  email: string
-  code: string
-  expiresAt: Date
-  isUsed: boolean
-}
+  id: string;
+  email: string;
+  code: string;
+  expiresAt: Date;
+  isUsed: boolean;
+};
 
-export type EmailAuthRequestSnapshot = EmailAuthRequest['snapshot']
+export type EmailAuthRequestSnapshot = EmailAuthRequest["snapshot"];
 
-type CreateProps = Omit<Props, 'isUsed' | 'expiresAt'> & {
-  currentDate: Date
-}
+type CreateProps = Omit<Props, "isUsed" | "expiresAt"> & {
+  currentDate: Date;
+};
 
 export class EmailAuthRequest extends AggregateRoot<Props> {
   get id() {
-    return this.props.id
+    return this.props.id;
   }
 
   get email() {
-    return this.props.email
+    return this.props.email;
   }
 
   get snapshot() {
@@ -38,29 +38,29 @@ export class EmailAuthRequest extends AggregateRoot<Props> {
       code: this.props.code,
       expiresAt: this.props.expiresAt,
       isUsed: this.props.isUsed,
-    }
+    };
   }
 
   verify(code: string, currentDate: Date) {
     if (this.isCodeInvalid(code))
-      return err(new EmailAuthRequestInvalidCodeError())
+      return err(new EmailAuthRequestInvalidCodeError());
     if (this.isExpired(currentDate))
-      return err(new EmailAuthRequestExpiredError())
-    if (this.props.isUsed) return err(new EmailAuthRequestAlreadyUsedError())
-    this.use()
-    return ok(true)
+      return err(new EmailAuthRequestExpiredError());
+    if (this.props.isUsed) return err(new EmailAuthRequestAlreadyUsedError());
+    this.use();
+    return ok(true);
   }
 
   private isCodeInvalid(code: string) {
-    return code != this.props.code
+    return code != this.props.code;
   }
 
   private isExpired(currentDate: Date) {
-    return currentDate.getTime() >= this.props.expiresAt.getTime()
+    return currentDate.getTime() >= this.props.expiresAt.getTime();
   }
 
   private use() {
-    this.props.isUsed = true
+    this.props.isUsed = true;
   }
 
   static fromSnapshot(snapshot: EmailAuthRequestSnapshot) {
@@ -70,7 +70,7 @@ export class EmailAuthRequest extends AggregateRoot<Props> {
       code: snapshot.code,
       expiresAt: snapshot.expiresAt,
       isUsed: snapshot.isUsed,
-    })
+    });
   }
 
   static create({ currentDate, ...props }: CreateProps) {
@@ -78,20 +78,28 @@ export class EmailAuthRequest extends AggregateRoot<Props> {
       ...props,
       expiresAt: this.getExpirationDate(currentDate),
       isUsed: false,
-    })
+    });
 
     request.addEvent<EmailAuthRequestCreatedEvent>(
-      'email-auth-request.created',
+      "email-auth-request.created",
       {
         id: request.id,
         email: request.props.email,
         code: request.props.code,
-      },
-    )
-    return request
+      }
+    );
+    return request;
   }
 
   private static getExpirationDate(currentDate: Date) {
-    return Time.fromDate(currentDate).add(Time.minutes(10)).toDate()
+    return Time.fromDate(currentDate).add(Time.minutes(10)).toDate();
   }
 }
+
+// CQRS
+// Transaction
+// Outbox pattern
+// Value object
+// Aggregate
+// Non throw pattern
+// Domain event

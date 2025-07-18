@@ -24,6 +24,24 @@
       "compilerOptions": {
         "tsConfigPath": "libs/core/tsconfig.lib.json"
       }
+    },
+    "google-wallet": {
+      "type": "library",
+      "root": "libs/google-wallet",
+      "entryFile": "index",
+      "sourceRoot": "libs/google-wallet/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/google-wallet/tsconfig.lib.json"
+      }
+    },
+    "wallet": {
+      "type": "library",
+      "root": "libs/wallet",
+      "entryFile": "index",
+      "sourceRoot": "libs/wallet/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/wallet/tsconfig.lib.json"
+      }
     }
   }
 }
