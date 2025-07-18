@@ -1,0 +1,17 @@
+services:
+  postgres:
+    image: 'postgres:13.2'
+    ports:
+      - "5432:5432"
+    networks:
+      - app_net
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: wally
+    volumes:
+      - ./docker-postgresql-data-for-dev:/var/lib/postgresql/data
+
+networks:
+  app_net:
+    driver: bridge
