@@ -8,12 +8,9 @@ import type { AuthGateway } from "./auth/ports/auth.gateway";
 import { rootReducer } from "./root-reducer";
 import { onAuthStateChangedListener } from "./auth/listeners/on-auth-state-changed.listener";
 import { FakeAuthGateway } from "./auth/adapters/fake-auth.gateway";
-import type { PropertyGateway } from "./properties/ports/property.gateway";
-import { FakePropertyGateway } from "./properties/ports/fake-legal-obligations.gateway";
 
 export type Dependencies = {
 	authGateway: AuthGateway;
-	propertyGateway: PropertyGateway;
 };
 
 export const createStore = (
@@ -41,16 +38,12 @@ export const createStore = (
 };
 
 export const createTestStore = (
-	{
-		authGateway = new FakeAuthGateway(),
-		propertyGateway = new FakePropertyGateway(),
-	}: Partial<Dependencies> = {},
+	{ authGateway = new FakeAuthGateway() }: Partial<Dependencies> = {},
 	preloadedState?: Partial<RootState>,
 ) => {
 	return createStore(
 		{
 			authGateway,
-			propertyGateway,
 		},
 		preloadedState,
 	);
