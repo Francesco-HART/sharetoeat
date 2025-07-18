@@ -12,20 +12,20 @@ import config from "./config";
 
 const authGateway = new FakeAuthGateway();
 authGateway.willAuthWithGoogleAs = {
-    id: "1234",
-    name: "John Doe",
+	id: "1234",
+	name: "John Doe",
 };
 const store = createStore({
-    authGateway: new LocalStorageAuthGateway(authGateway),
+	authGateway: new LocalStorageAuthGateway(authGateway),
 });
 
 initApiClient(config.api.url);
 
 createRoot(document.getElementById("root")!).render(
-    <StrictMode>
-        <Provider store={store}>
-            <RouterProvider router={createRouter()} />
-            <Toaster position="top-right" />
-        </Provider>
-    </StrictMode>,
+	<StrictMode>
+		<Provider store={store}>
+			<RouterProvider router={createRouter()} />
+			<Toaster position="top-right" />
+		</Provider>
+	</StrictMode>,
 );

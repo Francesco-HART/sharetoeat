@@ -1,8 +1,8 @@
 import {
-	type Action,
-	type ThunkDispatch,
-	configureStore,
-	createListenerMiddleware,
+    type Action,
+    type ThunkDispatch,
+    configureStore,
+    createListenerMiddleware,
 } from "@reduxjs/toolkit";
 import type { AuthGateway } from "./auth/ports/auth.gateway";
 import { rootReducer } from "./root-reducer";
@@ -10,43 +10,43 @@ import { onAuthStateChangedListener } from "./auth/listeners/on-auth-state-chang
 import { FakeAuthGateway } from "./auth/adapters/fake-auth.gateway";
 
 export type Dependencies = {
-	authGateway: AuthGateway;
+    authGateway: AuthGateway;
 };
 
 export const createStore = (
-	dependencies: Dependencies,
-	preloadedState?: Partial<RootState>,
+    dependencies: Dependencies,
+    preloadedState?: Partial<RootState>,
 ) => {
-	createListenerMiddleware<RootState, AppDispatch, Dependencies>({
-		extra: dependencies,
-	});
+    createListenerMiddleware<RootState, AppDispatch, Dependencies>({
+        extra: dependencies,
+    });
 
-	const store = configureStore({
-		reducer: rootReducer,
-		preloadedState,
-		middleware: (getDefaultMiddleware) =>
-			getDefaultMiddleware({
-				thunk: {
-					extraArgument: dependencies,
-				},
-			}),
-	});
+    const store = configureStore({
+        reducer: rootReducer,
+        preloadedState,
+        middleware: (getDefaultMiddleware) =>
+            getDefaultMiddleware({
+                thunk: {
+                    extraArgument: dependencies,
+                },
+            }),
+    });
 
-	onAuthStateChangedListener({ store, authGateway: dependencies.authGateway });
+    onAuthStateChangedListener({ store, authGateway: dependencies.authGateway });
 
-	return store;
+    return store;
 };
 
 export const createTestStore = (
-	{ authGateway = new FakeAuthGateway() }: Partial<Dependencies> = {},
-	preloadedState?: Partial<RootState>,
+    { authGateway = new FakeAuthGateway() }: Partial<Dependencies> = {},
+    preloadedState?: Partial<RootState>,
 ) => {
-	return createStore(
-		{
-			authGateway,
-		},
-		preloadedState,
-	);
+    return createStore(
+        {
+            authGateway,
+        },
+        preloadedState,
+    );
 };
 
 export type AppStore = ReturnType<typeof createStore>;
