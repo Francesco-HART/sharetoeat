@@ -1,6 +1,6 @@
 import { CommandHandler, ICommand, ICommandHandler } from "@nestjs/cqrs";
-import { ApplePassGenerator } from "../ports/apple-pass-generator";
 import { IDGenerator } from "@app/core/domain/providers/id-generator/id-generator";
+import { ApplePassGenerator } from "@app/google-wallet/ports/apple-pass-generator";
 
 export class GenerateAppleWalletCardCommand implements ICommand {
     constructor(public shopId: string) { }
@@ -8,25 +8,19 @@ export class GenerateAppleWalletCardCommand implements ICommand {
 
 @CommandHandler(GenerateAppleWalletCardCommand)
 export class GenerateAppleWalletCardCommandHandler
-    implements ICommandHandler<GenerateAppleWalletCardCommand, { url: string, serialNumber: string }> {
+    implements ICommandHandler<GenerateAppleWalletCardCommand, string> {
 
     constructor(
         private readonly applePassGenerator: ApplePassGenerator,
         private readonly idGenerator: IDGenerator
     ) { }
 
-    async execute(_: GenerateAppleWalletCardCommand): Promise<{ url: string, serialNumber: string }> {
-        const serialNumber = this.idGenerator.generate();
-        const url = await this.applePassGenerator.generate({
-            serialNumber,
+    async execute(_: GenerateAppleWalletCardCommand): Promise<string> {
+        return this.applePassGenerator.generate({
+            serialNumber: this.idGenerator.generate(),
             authToken: this.idGenerator.generate(),
             icon: "icon.png",
             title: "ShareToEat",
         });
-
-        return {
-            url,
-            serialNumber
-        };
     }
 }

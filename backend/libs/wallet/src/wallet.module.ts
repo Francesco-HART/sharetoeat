@@ -7,19 +7,33 @@ import { ConfigService } from "@nestjs/config";
 import { CoreModule } from "@app/core/core.module";
 import { GoogleWalletController } from "./infra/api/google-wallet.controller";
 import { GenerateGoogleWalletCardCommandHandler } from "./application/generate-google-wallet-card.command";
-import { GenerateAppleWalletCardCommandHandler } from "./application/generate-apple-wallet-card.command";
+import { GenerateAppleWalletCardCommandHandler } from "./application/commands/generate-apple-wallet-card.command";
 import { ApplePassGenerator } from "./ports/apple-pass-generator";
 import { PkPassGenerator } from "./infra/apple-wallet/PkPassGenerator";
 import { PkPassSignator } from "./infra/apple-wallet/PkPassSignator";
 import { AppleWalletController } from "./infra/api/apple-wallet.controller";
+import { RegisterAppleDeviceCommandHandler } from "./application/commands/register-apple-device.command";
+import { UnregisterAppleDeviceCommandHandler } from "./application/commands/unregister-apple-device.command";
+import { AppleRegistrationRepository } from "./ports/apple-wallet-registration.repository";
+import { InMemoryAppleRegistrationRepository } from "./infra/apple-wallet/in-memory-apple-registration.repository";
+import { ServeStaticModule } from "@nestjs/serve-static";
 
 @Module({
-    imports: [CoreModule],
+    imports: [CoreModule, ServeStaticModule.forRoot({
+        rootPath: path.resolve('pkpass'),
+        serveRoot: '/passes',
+    }),],
     controllers: [GoogleWalletController, AppleWalletController],
     providers: [
         GenerateGoogleWalletCardCommandHandler,
         GenerateAppleWalletCardCommandHandler,
+        RegisterAppleDeviceCommandHandler,
+        UnregisterAppleDeviceCommandHandler,
         WalletService,
+        {
+            provide: AppleRegistrationRepository,
+            useClass: InMemoryAppleRegistrationRepository,
+        },
         {
             provide: PkPassSignator,
             useFactory: () => {
@@ -38,7 +52,8 @@ import { AppleWalletController } from "./infra/api/apple-wallet.controller";
                     teamId: "Z4KA5FWMCJ",
                     passTypeId: "pass.fr.wally.wallet",
                     outputPath: "pkpass",
-                    passkitApiUrl: "https://5c117371f0ee.ngrok-free.app",
+                    passkitApiUrl: "https://7b221f6524d7.ngrok-free.app/apple-wallet",
+                    apiUrl: "https://7b221f6524d7.ngrok-free.app/passes",
                 }, signator);
             },
         },

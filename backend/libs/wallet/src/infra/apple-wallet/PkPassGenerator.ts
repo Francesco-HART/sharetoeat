@@ -10,6 +10,7 @@ type PkPassGeneratorConfig = {
     passTypeId: string;
     outputPath: string;
     passkitApiUrl: string;
+    apiUrl: string;
 };
 
 type Pass = {
@@ -45,21 +46,24 @@ export class PkPassGenerator implements ApplePassGenerator {
     ) { }
 
     async generate({ icon, serialNumber, authToken, title }: GenerationParams): Promise<string> {
+        const filename = `${serialNumber}.pkpass`;
         const outputPath = path.resolve(
             this.config.outputPath,
-            `${serialNumber}.pkpass`,
+            filename
         );
         const pass = this.getPass(serialNumber, authToken, title);
         const manifest = this.getManifest(pass, icon);
         const signature = this.signator.sign(manifest);
 
-        return await this.generateArchive({
+        await this.generateArchive({
             pass,
             manifest,
             signature,
             outputPath,
             icon,
         });
+
+        return `${this.config.apiUrl}/${filename}`;
     }
 
     private async generateArchive({
