@@ -1,5 +1,4 @@
 import { Module } from "@nestjs/common";
-import { WalletService } from "./wallet.service";
 import { GoogleWalletGateway } from "./ports/google-wallet.gateway";
 import * as path from "node:path";
 import { GoogleWalletService } from "./infra/google-wallet/google-wallet.service";
@@ -17,6 +16,8 @@ import { UnregisterAppleDeviceCommandHandler } from "./application/commands/unre
 import { AppleRegistrationRepository } from "./ports/apple-wallet-registration.repository";
 import { InMemoryAppleRegistrationRepository } from "./infra/apple-wallet/in-memory-apple-registration.repository";
 import { ServeStaticModule } from "@nestjs/serve-static";
+import { LoyaltyCardRepository } from "./ports/loyalty-card.repository";
+import { InMemoryLoyaltyCardRepository } from "./infra/repositories/loyalty-cards/in-memory-loyalty-card.repository";
 
 @Module({
     imports: [CoreModule, ServeStaticModule.forRoot({
@@ -25,11 +26,15 @@ import { ServeStaticModule } from "@nestjs/serve-static";
     }),],
     controllers: [GoogleWalletController, AppleWalletController],
     providers: [
+        {
+            provide: LoyaltyCardRepository,
+            useClass: InMemoryLoyaltyCardRepository
+        },
+
         GenerateGoogleWalletCardCommandHandler,
         GenerateAppleWalletCardCommandHandler,
         RegisterAppleDeviceCommandHandler,
         UnregisterAppleDeviceCommandHandler,
-        WalletService,
         {
             provide: AppleRegistrationRepository,
             useClass: InMemoryAppleRegistrationRepository,
@@ -71,6 +76,6 @@ import { ServeStaticModule } from "@nestjs/serve-static";
             inject: [ConfigService],
         },
     ],
-    exports: [WalletService],
+    exports: [],
 })
 export class WalletModule { }

@@ -1,47 +1,38 @@
 {
-  "$schema": "https://json.schemastore.org/nest-cli",
-  "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
-  "compilerOptions": {
-    "deleteOutDir": true,
-    "webpack": true
-  },
-  "projects": {
-    "auth": {
-      "type": "library",
-      "root": "libs/auth",
-      "entryFile": "index",
-      "sourceRoot": "libs/auth/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/auth/tsconfig.lib.json"
-      }
+    "$schema": "https://json.schemastore.org/nest-cli",
+    "collection": "@nestjs/schematics",
+    "sourceRoot": "src",
+    "compilerOptions": {
+        "deleteOutDir": true,
+        "webpack": true
     },
-    "core": {
-      "type": "library",
-      "root": "libs/core",
-      "entryFile": "index",
-      "sourceRoot": "libs/core/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/core/tsconfig.lib.json"
-      }
-    },
-    "google-wallet": {
-      "type": "library",
-      "root": "libs/google-wallet",
-      "entryFile": "index",
-      "sourceRoot": "libs/google-wallet/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/google-wallet/tsconfig.lib.json"
-      }
-    },
-    "wallet": {
-      "type": "library",
-      "root": "libs/wallet",
-      "entryFile": "index",
-      "sourceRoot": "libs/wallet/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/wallet/tsconfig.lib.json"
-      }
+    "projects": {
+        "auth": {
+            "type": "library",
+            "root": "libs/auth",
+            "entryFile": "index",
+            "sourceRoot": "libs/auth/src",
+            "compilerOptions": {
+                "tsConfigPath": "libs/auth/tsconfig.lib.json"
+            }
+        },
+        "core": {
+            "type": "library",
+            "root": "libs/core",
+            "entryFile": "index",
+            "sourceRoot": "libs/core/src",
+            "compilerOptions": {
+                "tsConfigPath": "libs/core/tsconfig.lib.json"
+            }
+        },
+        "wallet": {
+            "type": "library",
+            "root": "libs/wallet",
+            "entryFile": "index",
+            "sourceRoot": "libs/wallet/src",
+            "compilerOptions": {
+                "tsConfigPath": "libs/wallet/tsconfig.lib.json"
+            }
+        }
     }
-  }
 }

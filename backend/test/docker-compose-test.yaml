@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: 'postgres:13.2'
+    ports:
+      - "5433:5432"
+    networks:
+      - app_net
+    user: root
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: wally
+
+networks:
+  app_net:
+    driver: bridge

@@ -1,4 +1,4 @@
-import { AppleRegistrationRepository, Registration, Unregistration } from "@app/google-wallet/ports/apple-wallet-registration.repository";
+import { AppleRegistrationRepository, Registration, Unregistration } from "@app/wallet/ports/apple-wallet-registration.repository";
 
 type SerialNumber = string;
 type DeviceLibraryIdentifier = string;

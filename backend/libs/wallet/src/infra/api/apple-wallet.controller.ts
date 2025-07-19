@@ -1,6 +1,6 @@
-import { GenerateAppleWalletCardCommand } from "@app/google-wallet/application/commands/generate-apple-wallet-card.command";
-import { RegisterAppleDeviceCommand } from "@app/google-wallet/application/commands/register-apple-device.command";
-import { UnregisterAppleDeviceCommand } from "@app/google-wallet/application/commands/unregister-apple-device.command";
+import { GenerateAppleWalletCardCommand } from "@app/wallet/application/commands/generate-apple-wallet-card.command";
+import { RegisterAppleDeviceCommand } from "@app/wallet/application/commands/register-apple-device.command";
+import { UnregisterAppleDeviceCommand } from "@app/wallet/application/commands/unregister-apple-device.command";
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Res } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
 import { Response } from "express";
