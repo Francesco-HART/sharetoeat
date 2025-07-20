@@ -18,6 +18,9 @@ import { InMemoryAppleRegistrationRepository } from "./infra/apple-wallet/in-mem
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { LoyaltyCardRepository } from "./ports/loyalty-card.repository";
 import { InMemoryLoyaltyCardRepository } from "./infra/repositories/loyalty-cards/in-memory-loyalty-card.repository";
+import { IDGenerator } from "@app/core/domain/providers/id-generator/id-generator";
+import { AuthTokensGenerator } from "./infra/apple-wallet/AuthTokensGenerator";
+import { UUIDAuthTokenGenerator } from "./infra/apple-wallet/UUIDAuthTokenGenerator";
 
 @Module({
     imports: [CoreModule, ServeStaticModule.forRoot({
@@ -50,16 +53,20 @@ import { InMemoryLoyaltyCardRepository } from "./infra/repositories/loyalty-card
             },
         },
         {
+            provide: AuthTokensGenerator,
+            useClass: UUIDAuthTokenGenerator
+        },
+        {
             provide: ApplePassGenerator,
-            inject: [PkPassSignator],
-            useFactory: (signator: PkPassSignator) => {
+            inject: [PkPassSignator, IDGenerator],
+            useFactory: (signator: PkPassSignator, authTokenGenerator: AuthTokensGenerator) => {
                 return new PkPassGenerator({
                     teamId: "Z4KA5FWMCJ",
                     passTypeId: "pass.fr.wally.wallet",
                     outputPath: "pkpass",
                     passkitApiUrl: "https://7b221f6524d7.ngrok-free.app/apple-wallet",
                     apiUrl: "https://7b221f6524d7.ngrok-free.app/passes",
-                }, signator);
+                }, signator, authTokenGenerator);
             },
         },
         {

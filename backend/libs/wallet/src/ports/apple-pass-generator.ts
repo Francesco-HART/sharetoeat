@@ -1,10 +1,5 @@
-export type GenerationParams = {
-    serialNumber: string;
-    authToken: string;
-    icon: string;
-    title: string;
-};
+import { LoyaltyCard } from "../domain/loyalty-card";
 
 export abstract class ApplePassGenerator {
-    abstract generate(params: GenerationParams): Promise<string>;
+    abstract generate(loyaltyCard: LoyaltyCard): Promise<string>;
 }

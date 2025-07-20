@@ -1,3 +1,4 @@
+/*
 import express from "express";
 import path from "node:path";
 import fs from "node:fs";
@@ -184,3 +185,4 @@ export const startServer = (
         updatedPasses[serialNumber] = true;
     }
 };
+*/

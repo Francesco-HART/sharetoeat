@@ -2,8 +2,11 @@ import * as path from "node:path";
 import * as fs from "node:fs";
 import * as crypto from "node:crypto";
 import * as archiver from "archiver";
-import type { GenerationParams, ApplePassGenerator } from "../../ports/apple-pass-generator";
+import type { ApplePassGenerator } from "../../ports/apple-pass-generator";
 import type { PkPassSignator } from "./PkPassSignator";
+import { LoyaltyCard } from "@app/wallet/domain/loyalty-card";
+import { IDGenerator } from "@app/core/domain/providers/id-generator/id-generator";
+import { AuthTokensGenerator } from "./AuthTokensGenerator";
 
 type PkPassGeneratorConfig = {
     teamId: string;
@@ -43,9 +46,15 @@ export class PkPassGenerator implements ApplePassGenerator {
     constructor(
         private config: PkPassGeneratorConfig,
         private signator: PkPassSignator,
+        private authTokenGenerator: AuthTokensGenerator
     ) { }
 
-    async generate({ icon, serialNumber, authToken, title }: GenerationParams): Promise<string> {
+    async generate(loyaltyCard: LoyaltyCard): Promise<string> {
+        const serialNumber = loyaltyCard.id;
+        const authToken = this.authTokenGenerator.generate();
+        const icon = "icon.png";
+        const title = "ShareToEat";
+
         const filename = `${serialNumber}.pkpass`;
         const outputPath = path.resolve(
             this.config.outputPath,

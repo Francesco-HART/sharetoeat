@@ -29,12 +29,6 @@ export class GenerateAppleWalletCardCommandHandler
         })
 
         await this.loyaltyCardRepository.create(loyaltyCard);
-
-        return this.applePassGenerator.generate({
-            serialNumber: loyaltyCard.id,
-            authToken: this.idGenerator.generate(),
-            icon: "icon.png",
-            title: "ShareToEat",
-        });
+        return this.applePassGenerator.generate(loyaltyCard);
     }
 }

@@ -37,11 +37,23 @@ export class LoyaltyCard extends AggregateRoot<Props> {
         }
     }
 
+    addToWallet() {
+        this.props.isInWallet = true
+    }
+
+    removeFromWallet() {
+        this.props.isInWallet = false
+    }
+
     static create(props: CreateProps) {
         return new LoyaltyCard({
             ...props,
             isInWallet: false,
             createdAt: props.currentDate
         })
+    }
+
+    static fromSnapshot(snapshot: LoyaltyCardSnapshot) {
+        return new LoyaltyCard(snapshot)
     }
 }

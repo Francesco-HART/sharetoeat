@@ -8,6 +8,15 @@ export class InMemoryLoyaltyCardRepository implements LoyaltyCardRepository {
         this.cards.set(loyaltyCard.id, loyaltyCard.snapshot);
     }
 
+    async update(loyaltyCard: LoyaltyCard): Promise<void> {
+        this.cards.set(loyaltyCard.id, loyaltyCard.snapshot);
+    }
+
+    async findById(id: string): Promise<LoyaltyCard | null> {
+        const snapshot = this.cards.get(id);
+        return snapshot ? LoyaltyCard.fromSnapshot(snapshot) : null;
+    }
+
     public getAll(): LoyaltyCardSnapshot[] {
         return Array.from(this.cards.values());
     }
