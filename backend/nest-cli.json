@@ -25,13 +25,13 @@
         "tsConfigPath": "libs/core/tsconfig.lib.json"
       }
     },
-    "marketing-campagn": {
+    "marketing-Campaign": {
       "type": "library",
-      "root": "libs/marketing-campagn",
+      "root": "libs/marketing-campaign",
       "entryFile": "index",
-      "sourceRoot": "libs/marketing-campagn/src",
+      "sourceRoot": "libs/marketing-campaign/src",
       "compilerOptions": {
-        "tsConfigPath": "libs/marketing-campagn/tsconfig.lib.json"
+        "tsConfigPath": "libs/marketing-campaign/tsconfig.lib.json"
       }
     },
     "wallet": {

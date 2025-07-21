@@ -31,11 +31,11 @@
       "@app/core/*": [
         "libs/core/src/*"
       ],
-      "@app/marketing-campagn": [
-        "libs/marketing-campagn/src"
+      "@app/marketing-campaign": [
+        "libs/marketing-campaign/src"
       ],
-      "@app/marketing-campagn/*": [
-        "libs/marketing-campagn/src/*"
+      "@app/marketing-campaign/*": [
+        "libs/marketing-campaign/src/*"
       ],
       "@app/wallet": [
         "libs/wallet/src"
