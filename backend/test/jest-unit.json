@@ -18,6 +18,7 @@
         "^@app/auth/(.*)$": "<rootDir>/libs/auth/src/$1",
         "^@app/core/(.*)$": "<rootDir>/libs/core/src/$1",
         "^@app/wallet/(.*)$": "<rootDir>/libs/wallet/src/$1",
+        "^@app/marketing-campaign/(.*)$": "<rootDir>/libs/marketing-campaign/src/$1",
         "test/(.*)$": "<rootDir>/test/$1"
     }
 }

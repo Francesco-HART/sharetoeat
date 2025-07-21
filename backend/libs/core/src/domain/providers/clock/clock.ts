@@ -1,3 +1,3 @@
 export abstract class Clock {
-  abstract now(): Date
+    abstract now(): Date
 }

@@ -1,2 +1,1 @@
-export * from "./marketing-Campaign.module";
-export * from "./marketing-Campaign.service";
+export * from "./marketing-campaign.module";

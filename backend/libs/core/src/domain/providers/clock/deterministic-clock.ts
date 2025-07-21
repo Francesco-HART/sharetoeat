@@ -1,9 +1,9 @@
 import { Clock } from './clock'
 
 export class DeterministicClock implements Clock {
-  constructor(private currentDate: Date) {}
+    constructor(public currentDate: Date) { }
 
-  now(): Date {
-    return this.currentDate
-  }
+    now(): Date {
+        return this.currentDate
+    }
 }
