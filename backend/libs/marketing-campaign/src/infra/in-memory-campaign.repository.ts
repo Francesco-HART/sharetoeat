@@ -4,8 +4,12 @@ import { CampaignRepository } from "./campaign.repository";
 export class InMemoryCampaignRepository implements CampaignRepository {
     campaigns = new Map<string, Campaign>();
 
-    async create(Campaign: Campaign) {
-        this.campaigns.set(Campaign.id, Campaign);
+    async create(campaign: Campaign) {
+        this.campaigns.set(campaign.id, campaign);
+    }
+
+    async update(campaign: Campaign): Promise<void> {
+        this.campaigns.set(campaign.id, campaign);
     }
 
     async getCampaignsWithNotificationsScheduledAt(scheduledAt: Date): Promise<Campaign[]> {

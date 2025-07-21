@@ -23,7 +23,7 @@ export class FakeWalletGateway implements WalletGateway {
 export type Dependecies = {
     campaignRepo: InMemoryCampaignRepository;
     idProvider: FakeSequentialIDGenerator;
-    walletGateway: FakeWalletGateway;
+    walletGateway: ;
     clock: DeterministicClock;
 };
 export function createCampaignFixture(
@@ -84,7 +84,7 @@ export function createCampaignFixture(
         },
 
         thenWalletNotificationsSentIs(notificationsSent: SendNotificationParams[]) {
-            expect(deps.walletGateway.getNotificationsSent()).toEqual(notificationsSent);
+            expect(deps.eventBus.getNotificationsSent()).toEqual(notificationsSent);
         }
     };
 }

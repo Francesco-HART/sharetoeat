@@ -8,9 +8,10 @@ import { GoogleWalletConfig } from "./google-wallet-config";
 import { GoogleWalletGateway } from "@app/wallet/ports/google-wallet.gateway";
 import { Injectable } from "@nestjs/common";
 import * as fs from "fs";
+import { GoogleNotificationStrategy, Wallet } from "libs/wallet/test/commands/send-notifications-to-shop-card.command.spec";
 
 @Injectable()
-export class GoogleWalletService implements GoogleWalletGateway {
+export class GoogleWalletService extends Wallet implements GoogleWalletGateway {
     private issuerId: string;
     private keyFilePath: string;
     private privateKey: string;
@@ -18,6 +19,8 @@ export class GoogleWalletService implements GoogleWalletGateway {
     private baseURL = "https://walletobjects.googleapis.com/walletobjects/v1";
 
     constructor(config: GoogleWalletConfig) {
+        super()
+        this.notificationStrategy = new GoogleNotificationStrategy();
         this.issuerId = config.issuerId;
         this.keyFilePath = config.keyFilePath;
         const serviceAccountJson = JSON.parse(

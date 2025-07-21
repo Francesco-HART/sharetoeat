@@ -1,5 +1,5 @@
 export class SystemClock {
-  now() {
-    return new Date()
-  }
+    now() {
+        return new Date()
+    }
 }

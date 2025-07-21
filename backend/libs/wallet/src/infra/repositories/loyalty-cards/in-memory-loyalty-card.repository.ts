@@ -20,4 +20,8 @@ export class InMemoryLoyaltyCardRepository implements LoyaltyCardRepository {
     public getAll(): LoyaltyCardSnapshot[] {
         return Array.from(this.cards.values());
     }
+
+    public addCard(card: LoyaltyCard) {
+        this.cards.set(card.id, card.snapshot);
+    }
 }
