@@ -1,5 +1,5 @@
 import { Clock } from "@app/core/domain/providers/clock/clock";
-import { CampaignRepository } from "@app/marketing-campaign/infra/campaign.repository";
+import { CampaignRepository } from "@app/marketing-campaign/ports/campaign.repository";
 import { WalletGateway } from "@app/wallet/public-ports/wallet.gateway";
 import { CommandHandler, ICommand, ICommandHandler } from "@nestjs/cqrs";
 

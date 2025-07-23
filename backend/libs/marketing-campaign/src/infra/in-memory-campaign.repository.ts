@@ -1,5 +1,5 @@
 import { Campaign } from "../domain/campaign";
-import { CampaignRepository } from "./campaign.repository";
+import { CampaignRepository } from "../ports/campaign.repository";
 
 export class InMemoryCampaignRepository implements CampaignRepository {
     campaigns = new Map<string, Campaign>();

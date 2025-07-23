@@ -1,5 +1,5 @@
 import { IDGenerator } from "@app/core/domain/providers/id-generator/id-generator";
-import { CampaignRepository } from "@app/marketing-campaign/infra/campaign.repository";
+import { CampaignRepository } from "@app/marketing-campaign/ports/campaign.repository";
 import { CommandHandler, ICommand, ICommandHandler } from "@nestjs/cqrs";
 
 export class StartMarketingCampaignCommand implements ICommand {
