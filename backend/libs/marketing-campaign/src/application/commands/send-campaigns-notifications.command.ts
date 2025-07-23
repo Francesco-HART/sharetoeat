@@ -16,16 +16,21 @@ export class SendCampaignsNotificationsCommandHandler
     ) { }
 
     async execute(_: SendCampaignsNotificationsCommand): Promise<void> {
-        const campaigns = await this.campaignRepo.getCampaignsWithNotificationsScheduledAt(this.clock.nowDateOnly());
-        const campaign = campaigns[0];
+        const now = this.clock.nowDateOnly();
+        const campaigns = await this.campaignRepo.getCampaignsWithNotificationsScheduledAt(now);
 
-        await this.walletGateway.sendNotification({
-            shopId: campaign.shopId,
-            message: campaign.notifications[0].message,
-        });
+        await Promise.all(campaigns.map(async (campaign) => {
+            const notification = campaign.notifications.find((n) => n.scheduledAt.getTime() === now.value.getTime())!;
 
-        campaign.notifications[0].isSent = true;
+            await this.walletGateway.sendNotification({
+                shopId: campaign.shopId,
+                message: notification.message,
+            });
 
-        await this.campaignRepo.update(campaign);
+            notification.isSent = true;
+        }))
+
+        await Promise.all(campaigns.map(async (campaign) => await this.campaignRepo.update(campaign)));
+
     }
 }

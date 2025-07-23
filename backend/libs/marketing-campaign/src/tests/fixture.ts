@@ -4,7 +4,6 @@ import { Campaign } from "../domain/campaign";
 import { InMemoryCampaignRepository } from "../infra/in-memory-campaign.repository";
 import { SendNotificationParams, WalletGateway } from "@app/wallet/public-ports/wallet.gateway";
 import { DeterministicClock } from "@app/core/domain/providers/clock/deterministic-clock";
-import { Clock } from "@app/core/domain/providers/clock/clock";
 import { SendCampaignsNotificationsCommand, SendCampaignsNotificationsCommandHandler } from "../application/commands/send-campaigns-notifications.command";
 
 
@@ -23,7 +22,7 @@ export class FakeWalletGateway implements WalletGateway {
 export type Dependecies = {
     campaignRepo: InMemoryCampaignRepository;
     idProvider: FakeSequentialIDGenerator;
-    walletGateway: ;
+    walletGateway: FakeWalletGateway;
     clock: DeterministicClock;
 };
 export function createCampaignFixture(
@@ -84,7 +83,7 @@ export function createCampaignFixture(
         },
 
         thenWalletNotificationsSentIs(notificationsSent: SendNotificationParams[]) {
-            expect(deps.eventBus.getNotificationsSent()).toEqual(notificationsSent);
+            expect(deps.walletGateway.getNotificationsSent()).toEqual(notificationsSent);
         }
     };
 }

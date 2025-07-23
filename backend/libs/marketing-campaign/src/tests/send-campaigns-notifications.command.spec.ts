@@ -32,6 +32,72 @@ describe("Send campaigns notifications", () => {
             ])
         })
 
+        it("Multiple notifications is sent", async () => {
+            fixture = createCampaignFixture();
+            fixture.givenNow(new Date("2025-12-07"));
+            fixture.givenCampaing(createCampaign({
+                id: "123",
+                shopId: "1",
+                notifications: createNotifications([
+                    createNotification({
+                        scheduledAt: new Date("2025-12-07"),
+                        message: "Hello, world!",
+                    })
+                ])
+            }));
+            fixture.givenCampaing(createCampaign({
+                id: "456",
+                shopId: "2",
+                notifications: createNotifications([
+                    createNotification({
+                        scheduledAt: new Date("2025-12-07"),
+                        message: "Hello, world! 2",
+                    })
+                ])
+            }))
+
+            await fixture.whenSendCampaignsNotifications();
+
+            fixture.thenWalletNotificationsSentIs([
+                {
+                    shopId: "1",
+                    message: "Hello, world!"
+                },
+                {
+                    shopId: "2",
+                    message: "Hello, world! 2"
+                }
+            ])
+        });
+
+        it("notification is not first notification of campaign", async () => {
+            fixture = createCampaignFixture();
+            fixture.givenNow(new Date("2025-12-07"));
+            fixture.givenCampaing(createCampaign({
+                shopId: "1",
+                notifications: createNotifications([
+                    createNotification({
+                        scheduledAt: new Date("2025-12-06"),
+                        message: "Hello, world!",
+                    }),
+                    createNotification({
+                        scheduledAt: new Date("2025-12-07"),
+                        message: "Hello, world! 2",
+                    })
+
+                ])
+            }));
+
+            await fixture.whenSendCampaignsNotifications();
+
+            fixture.thenWalletNotificationsSentIs([
+                {
+                    shopId: "1",
+                    message: "Hello, world! 2"
+                },
+            ])
+        });
+
         it("notification is sent", async () => {
             fixture = createCampaignFixture();
             fixture.givenNow(new Date("2025-12-07T12:00:00Z"));

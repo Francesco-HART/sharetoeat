@@ -1,3 +1,4 @@
+import { DateOnly } from "@app/core/domain/value-objects/date-only";
 import { Campaign } from "../domain/campaign";
 import { CampaignRepository } from "../ports/campaign.repository";
 
@@ -12,9 +13,10 @@ export class InMemoryCampaignRepository implements CampaignRepository {
         this.campaigns.set(campaign.id, campaign);
     }
 
-    async getCampaignsWithNotificationsScheduledAt(scheduledAt: Date): Promise<Campaign[]> {
+    async getCampaignsWithNotificationsScheduledAt(scheduledAt: DateOnly): Promise<Campaign[]> {
+        const scheduledAtDate = scheduledAt.value;
         return Array.from(this.campaigns.values())
-            .filter((c) => c.notifications.some((n) => n.scheduledAt.getTime() === scheduledAt.getTime()));
+            .filter((c) => c.notifications.some((n) => n.scheduledAt.getTime() === scheduledAtDate.getTime()));
     }
 
     getOneCampaign(id: string) {

@@ -19,11 +19,11 @@ export class StartMarketingCampaignCommand implements ICommand {
 export class StartMarketingCampaignCommandHandler
     implements ICommandHandler<StartMarketingCampaignCommand> {
     constructor(
-        private readonly CampaignRepo: CampaignRepository,
+        private readonly campaignRepo: CampaignRepository,
         private readonly idProvider: IDGenerator
     ) { }
     async execute({ params }: StartMarketingCampaignCommand): Promise<void> {
-        await this.CampaignRepo.create({
+        await this.campaignRepo.create({
             id: params.id,
             shopId: params.shopId,
             notifications: params.notifications.map((notif) => ({
