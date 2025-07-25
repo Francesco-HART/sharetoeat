@@ -5,145 +5,141 @@ import * as archiver from "archiver";
 import type { ApplePassGenerator } from "../../ports/apple-pass-generator";
 import type { PkPassSignator } from "./PkPassSignator";
 import { LoyaltyCard } from "@app/wallet/domain/loyalty-card";
-import { IDGenerator } from "@app/core/domain/providers/id-generator/id-generator";
 import { AuthTokensGenerator } from "./AuthTokensGenerator";
 
 type PkPassGeneratorConfig = {
-    teamId: string;
-    passTypeId: string;
-    outputPath: string;
-    passkitApiUrl: string;
-    apiUrl: string;
+  teamId: string;
+  passTypeId: string;
+  outputPath: string;
+  passkitApiUrl: string;
+  apiUrl: string;
 };
 
 type Pass = {
-    formatVersion: number;
-    passTypeIdentifier: string;
-    serialNumber: string;
-    teamIdentifier: string;
-    organizationName: string;
-    description: string;
-    backgroundColor: string;
-    foregroundColor: string;
-    webServiceURL: string;
-    authenticationToken: string;
-    generic: {
-        primaryFields: {
-            key: string;
-            label: string;
-            value: string;
-            changeMessage?: string;
-        }[];
-    };
+  formatVersion: number;
+  passTypeIdentifier: string;
+  serialNumber: string;
+  teamIdentifier: string;
+  organizationName: string;
+  description: string;
+  backgroundColor: string;
+  foregroundColor: string;
+  webServiceURL: string;
+  authenticationToken: string;
+  generic: {
+    primaryFields: {
+      key: string;
+      label: string;
+      value: string;
+      changeMessage?: string;
+    }[];
+  };
 };
 
 export type Manifest = {
-    "pass.json": string;
-    "icon.png": string;
+  "pass.json": string;
+  "icon.png": string;
 };
 
 export class PkPassGenerator implements ApplePassGenerator {
-    constructor(
-        private config: PkPassGeneratorConfig,
-        private signator: PkPassSignator,
-        private authTokenGenerator: AuthTokensGenerator
-    ) { }
+  constructor(
+    private config: PkPassGeneratorConfig,
+    private signator: PkPassSignator,
+    private authTokenGenerator: AuthTokensGenerator
+  ) {}
 
-    async generate(loyaltyCard: LoyaltyCard): Promise<string> {
-        const serialNumber = loyaltyCard.id;
-        const authToken = this.authTokenGenerator.generate();
-        const icon = "icon.png";
-        const title = "ShareToEat";
+  async generate(loyaltyCard: LoyaltyCard): Promise<string> {
+    const serialNumber = loyaltyCard.id;
+    const authToken = this.authTokenGenerator.generate();
+    const icon = "icon.png";
+    const title = "ShareToEat";
 
-        const filename = `${serialNumber}.pkpass`;
-        const outputPath = path.resolve(
-            this.config.outputPath,
-            filename
-        );
-        const pass = this.getPass(serialNumber, authToken, title);
-        const manifest = this.getManifest(pass, icon);
-        const signature = this.signator.sign(manifest);
+    const filename = `${serialNumber}.pkpass`;
+    const outputPath = path.resolve(this.config.outputPath, filename);
+    const pass = this.getPass(serialNumber, authToken, title);
+    const manifest = this.getManifest(pass, icon);
+    const signature = this.signator.sign(manifest);
 
-        await this.generateArchive({
-            pass,
-            manifest,
-            signature,
-            outputPath,
-            icon,
-        });
+    await this.generateArchive({
+      pass,
+      manifest,
+      signature,
+      outputPath,
+      icon,
+    });
 
-        return `${this.config.apiUrl}/${filename}`;
-    }
+    return `${this.config.apiUrl}/${filename}`;
+  }
 
-    private async generateArchive({
-        pass,
-        manifest,
-        signature,
-        outputPath,
-        icon,
-    }: {
-        pass: Pass;
-        manifest: Manifest;
-        signature: string;
-        outputPath: string;
-        icon: string;
-    }) {
-        const output = fs.createWriteStream(outputPath);
-        const archive = archiver("zip", { store: true });
+  private async generateArchive({
+    pass,
+    manifest,
+    signature,
+    outputPath,
+    icon,
+  }: {
+    pass: Pass;
+    manifest: Manifest;
+    signature: string;
+    outputPath: string;
+    icon: string;
+  }) {
+    const output = fs.createWriteStream(outputPath);
+    const archive = archiver("zip", { store: true });
 
-        archive.pipe(output);
-        archive.append(JSON.stringify(pass), { name: "pass.json" });
-        archive.append(JSON.stringify(manifest), { name: "manifest.json" });
-        archive.append(Buffer.from(signature, "binary"), { name: "signature" });
-        archive.file(path.resolve(icon), { name: "icon.png" });
-        await archive.finalize();
+    archive.pipe(output);
+    archive.append(JSON.stringify(pass), { name: "pass.json" });
+    archive.append(JSON.stringify(manifest), { name: "manifest.json" });
+    archive.append(Buffer.from(signature, "binary"), { name: "signature" });
+    archive.file(path.resolve(icon), { name: "icon.png" });
+    await archive.finalize();
 
-        return outputPath;
-    }
+    return outputPath;
+  }
 
-    private getPass(
-        serialNumber: string,
-        authToken: string,
-        title: string,
-    ): Pass {
-        return {
-            formatVersion: 1,
-            passTypeIdentifier: this.config.passTypeId,
-            serialNumber: serialNumber,
-            teamIdentifier: this.config.teamId,
-            webServiceURL: this.config.passkitApiUrl,
-            authenticationToken: authToken,
-            organizationName: "ShareToEat",
-            description: "ShareToEat",
-            backgroundColor: "#FFFFFF",
-            foregroundColor: "#000000",
-            generic: {
-                primaryFields: [
-                    {
-                        key: "titre",
-                        label: "Carte",
-                        value: title,
-                        changeMessage: "Changement de titre: %@",
-                    },
-                ],
-            },
-        };
-    }
+  private getPass(
+    serialNumber: string,
+    authToken: string,
+    title: string
+  ): Pass {
+    return {
+      formatVersion: 1,
+      passTypeIdentifier: this.config.passTypeId,
+      serialNumber: serialNumber,
+      teamIdentifier: this.config.teamId,
+      webServiceURL: this.config.passkitApiUrl,
+      authenticationToken: authToken,
+      organizationName: "ShareToEat",
+      description: "ShareToEat",
+      backgroundColor: "#FFFFFF",
+      foregroundColor: "#000000",
+      generic: {
+        primaryFields: [
+          {
+            key: "titre",
+            label: "Carte",
+            value: title,
+            changeMessage: "Changement de titre: %@",
+          },
+        ],
+      },
+    };
+  }
 
-    private getManifest(pass: Pass, iconPath: string): Manifest {
-        const passHash = crypto
-            .createHash("sha1")
-            .update(JSON.stringify(pass))
-            .digest("hex");
+  private getManifest(pass: Pass, iconPath: string): Manifest {
+    const passHash = crypto
+      .createHash("sha1")
+      .update(JSON.stringify(pass))
+      .digest("hex");
 
-        const iconHash = crypto
-            .createHash("sha1")
-            .update(fs.readFileSync(path.resolve(iconPath)))
-            .digest("hex");
+    const iconHash = crypto
+      .createHash("sha1")
+      .update(fs.readFileSync(path.resolve(iconPath)))
+      .digest("hex");
 
-        return {
-            "pass.json": passHash,
-            "icon.png": iconHash,
-        };
-    }
+    return {
+      "pass.json": passHash,
+      "icon.png": iconHash,
+    };
+  }
 }

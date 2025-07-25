@@ -1,5 +1,5 @@
 import { CommandHandler, ICommand, ICommandHandler } from "@nestjs/cqrs";
-import { GoogleWalletGateway } from "../ports/google-wallet.gateway";
+import { GoogleWalletGateway } from "../../ports/google-wallet.gateway";
 
 export class GenerateGoogleWalletCardCommand implements ICommand {
   constructor(public shopId: string) {}
